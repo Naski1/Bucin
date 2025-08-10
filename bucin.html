@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bucin Zone - Ikhsan</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Floating Hearts -->
+    <div class="floating-hearts" id="floatingHearts"></div>
+    
+    <!-- Audio Element -->
+    <audio id="backgroundMusic" loop autoplay>
+        <source src="static/musik.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+
+    <div class="container">
+        <div class="heart">❤️</div>
+        <h1>Bucin Zone</h1>
+        <p>Di sini kamu bisa jujur tentang perasaanmu... Aku Ikhsan hanya ingin tahu posisiku di hatimu 💔</p>
+        
+        <!-- Step 1: Input Nama -->
+        <div id="step1">
+            <div class="form-group">
+                <label for="nama">Sebelum mulai, tolong masukkan nama kamu dulu ya 😊</label>
+                <input type="text" id="nama" placeholder="Masukkan namamu...">
+            </div>
+            <button onclick="nextStep()">Lanjutkan ❤️</button>
+        </div>
+
+        <!-- Step 2: Pertanyaan -->
+        <div id="step2" class="hidden">
+            <p id="greeting"></p>
+            <p>Ada pertanyaan jujur dari aku, Ikhsan...</p>
+            <div class="form-group">
+                <label id="questionLabel">Menurut kamu, aku Ikhsan itu dianggap apa sama kamu? 🤔</label>
+                <select id="jawaban">
+                    <option value="">Pilih jawaban...</option>
+                    <option value="calon suami">Calon Suami</option>
+                    <option value="teman baik">Teman baik</option>
+                    <option value="sahabat dekat">Sahabat dekat</option>
+                    <option value="teman biasa">Teman biasa</option>
+                    <option value="lebih dari teman">Lebih dari teman</option>
+                    <option value="cuma kenalan">Cuma kenalan</option>
+                    <option value="gak tau">Gak tau</option>
+                </select>
+            </div>
+            <button onclick="submitResponse()">Lihat Jawaban 💬</button>
+        </div>
+
+        <!-- Step 3: Hasil -->
+        <div id="step3" class="hidden">
+            <div class="result">
+                <p id="resultText"></p>
+                <p id="challengeText">Kalau kamu berani dan jujur, kirimkan ini ke Ikhsan lewat WhatsApp!</p>
+            </div>
+            <button class="wa-button" id="waButton">
+                📱 KIRIM KE IKHSAN DI WHATSAPP
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Simpan nama pengguna
+        let namaUser = '';
+        let jawabanUser = '';
+        const music = document.getElementById('backgroundMusic');
+
+        // Buat floating hearts
+        function createFloatingHearts() {
+            const container = document.getElementById('floatingHearts');
+            const hearts = ['❤️', '💖', '💕', '💓', '💗', '💘', '💞', '💝'];
+            
+            for (let i = 0; i < 15; i++) {
+                setTimeout(() => {
+                    const heart = document.createElement('div');
+                    heart.className = 'floating-heart';
+                    heart.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+                    heart.style.left = Math.random() * 100 + 'vw';
+                    heart.style.opacity = 0;
+                    heart.style.animationDuration = (Math.random() * 3 + 4) + 's';
+                    heart.style.animationDelay = (Math.random() * 5) + 's';
+                    container.appendChild(heart);
+                    
+                    // Hapus heart lama
+                    setTimeout(() => {
+                        heart.remove();
+                    }, 10000);
+                }, i * 800);
+            }
+        }
+
+        // Coba mainkan musik secara otomatis
+        function autoPlayMusic() {
+            // Coba mainkan langsung
+            music.play().catch(error => {
+                console.log('Autoplay diblokir oleh browser:', error);
+                // Jika autoplay diblokir, coba mainkan setelah interaksi pengguna
+                document.addEventListener('click', function() {
+                    music.play().catch(e => {
+                        console.log('Gagal memutar musik setelah klik:', e);
+                    });
+                }, { once: true });
+            });
+        }
+
+        // Inisialisasi
+        window.onload = function() {
+            createFloatingHearts();
+            setInterval(createFloatingHearts, 12000);
+            autoPlayMusic();
+        };
+
+        // Lanjut ke step 2
+        function nextStep() {
+            const namaInput = document.getElementById('nama').value.trim();
+            if (namaInput === '') {
+                alert('Tolong masukkan namamu dulu ya 😊');
+                return;
+            }
+
+            namaUser = namaInput;
+            document.getElementById('step1').classList.add('hidden');
+            document.getElementById('step2').classList.remove('hidden');
+            
+            // Sapa dengan nama
+            const greeting = document.getElementById('greeting');
+            greeting.innerHTML = `<strong>${namaUser}</strong>, hati-hati ya... ini pertanyaan jujur dari aku Ikhsan...`;
+        }
+
+        // Submit jawaban
+        function submitResponse() {
+            const jawaban = document.getElementById('jawaban').value;
+            if (jawaban === '') {
+                alert('Tolong pilih salah satu jawaban ya...');
+                return;
+            }
+
+            jawabanUser = jawaban;
+            // Sembunyikan step 2, tampilkan hasil
+            document.getElementById('step2').classList.add('hidden');
+            document.getElementById('step3').classList.remove('hidden');
+
+            // Tampilkan pesan sesuai jawaban
+            const resultText = document.getElementById('resultText');
+            
+            let pesan = '';
+            switch(jawaban) {
+                case 'teman baik':
+                    pesan = `✨ ${namaUser}, kamu menjawab: "Teman baik"\n\nAku senang jadi teman baik kamu. Semoga kita selalu bisa saling support dan ada di saat susah maupun senang. ❤️`;
+                    break;
+                case 'sahabat dekat':
+                    pesan = `🌟 ${namaUser}, kamu menjawab: "Sahabat dekat"\n\nWahh... sahabat dekat? Aku harap kamu merasa nyaman sama aku dan kita bisa terus cerita apa aja tanpa beban. 🤗`;
+                    break;
+                case 'teman biasa':
+                    pesan = `😔 ${namaUser}, kamu menjawab: "Teman biasa"\n\nOke aku mengerti... cuma teman biasa. Tapi aku harap suatu hari kamu bisa melihat lebih dari itu. 😞`;
+                    break;
+                case 'lebih dari teman':
+                    pesan = `💘 ${namaUser}, kamu menjawab: "Lebih dari teman"\n\nHati aku langsung berdebar! Apa maksudmu ini? Aku penasaran banget... 💘`;
+                    break;
+                case 'cuma kenalan':
+                    pesan = `👋 ${namaUser}, kamu menjawab: "Cuma kenalan"\n\nCuma kenalan? Aku ingin lebih dari itu... aku ingin mengenalmu lebih dalam. 😔`;
+                    break;
+                case 'gak tau':
+                    pesan = `🤔 ${namaUser}, kamu menjawab: "Gak tau"\n\nGak tau? Aku harap kamu bisa menemukan jawabannya... karena aku sudah tahu perasaanku padamu. 😉`;
+                    break;
+                default:
+                    pesan = `Terima kasih atas jawabannya, ${namaUser}...`;
+            }
+
+            resultText.textContent = pesan;
+
+            // Setup WhatsApp button
+            const waButton = document.getElementById('waButton');
+            const waMessage = encodeURIComponent(
+                `Hai Ikhsan... Aku baru saja mengisi Bucin Zone mu.\n\nNamaku: ${namaUser}\nJawabanku: ${jawaban}\n\n${pesan}\n\nAku berani kirim ini karena aku jujur sama perasaanku. ❤️`
+            );
+            waButton.href = `https://wa.me/6282233240254?text=${waMessage}`;
+        }
+    </script>
+</body>
+</html>
